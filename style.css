@@ -1,0 +1,54 @@
+.grid {
+  display: grid;
+  grid-template-areas:
+    "topbar topbar topbar"
+    "sidebar sketch rightside"
+    "footer footer footer";
+    
+  grid-template-columns: 2fr 5fr 2fr;
+  
+  grid-template-rows: auto 1fr auto;
+  
+  justify-items: center;
+}
+
+header {
+  grid-area: topbar;
+}
+
+#aside {
+  grid-area: sidebar;
+  padding-left: 20px;  
+}
+
+#sketchdiv {
+  grid-area: sketch;
+  padding-top: 5%;
+  
+}
+
+#gallery {
+  grid-area: rightside;
+  /*width: 120px;*/
+  max-height: calc(100vh - 9rem);
+  overflow-y: auto;
+  top: 0;
+  bottom: 0;
+  min-height: 120px;
+  /*max-height: auto;*/
+  float: left;
+  margin: 3px;
+  padding: 3px;
+  background-color: burlywood;
+}
+
+#gallery img {
+  max-width: 100%;
+  height: auto;
+}
+    
+footer {
+  grid-area: footer;
+  /*padding-top: 4%;*/
+}
+   
