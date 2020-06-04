@@ -73,9 +73,11 @@ function setup() {
   //inputs setup
   inputFile1 = createFileInput(handleFile1);
   gallery1 = createButton('Choose from gallery');
-  gallery1.mousePressed(viewImages);
+  gallery1.mousePressed(function() {viewImages(1);});
 
   inputFile2 = createFileInput(handleFile2);
+  gallery2 = createButton('Choose from gallery');
+  gallery2.mousePressed(function() {viewImages(2);});
 
   headingTextInput = createInput();
   subTextInput = createInput();
@@ -123,6 +125,7 @@ function setup() {
   image2Label = createElement('p', 'Replace Image 2')
   image2Label.parent("aside");
   inputFile2.parent("aside");
+  gallery2.parent("aside");
 
   headingTextInput.parent("aside");
   HeadingColorPicker.parent("aside");
@@ -136,6 +139,7 @@ function setup() {
   bgLabel.parent("aside");
   bgColorPicker.parent("aside");
   
+  saveSketchButton.parent("aside");
 
 
   textFont(font1);
@@ -244,10 +248,8 @@ function putOnTop(index) {
 
 function mouseDragged() {
   if(isDragging) {
-    //let m = createVector(mouseX, mouseY);
     dragRec.x = mouseX + clickOffset[0];
     dragRec.y = mouseY + clickOffset[1];
-    //dragRec.pos.set(m).add(clickOffset);
   } 
 }
 
@@ -263,7 +265,7 @@ function placeImages() {
   }
 }
 
-function viewImages() {
+function viewImages(buttonNum) {
 let galleryDiv = document.getElementById("gallery");
 if (galleryDiv.childNodes.length < 2) {
     let galleryLabel = createElement('h1', 'Images')
@@ -272,13 +274,13 @@ if (galleryDiv.childNodes.length < 2) {
       src = i + ".jpg"
       img = createImg(src, "idk")
       img.parent("gallery");
-      img.onclick = function () {
-        imgNew1 = loadImage(src);
-        rects[0].img = imgNew1;
-        rects[0].img.width = imgNew1.width;
-        rects[0].img.height = imgNew1.height;
+      if (buttonNum == 1) {
+        img.attribute('onclick',"gallerySelectImg1(src)")
+      } else if (buttonNum == 2) {
+        img.attribute('onclick',"gallerySelectImg2(src)")
       }
-    }
+      
+      }
   } else {
     var child = galleryDiv.lastElementChild;
     while (child) {
@@ -286,6 +288,23 @@ if (galleryDiv.childNodes.length < 2) {
       child = galleryDiv.lastElementChild;
     }
   }
+}
+function gallerySelectImg1(source) {
+  imgNew1 = loadImage(source);
+  rects[0].img.width = imgNew1.width;
+  rects[0].img.height = imgNew1.height;
+  rects[0].img = imgNew1;
+  rects[0].img.x = imgNew1.x;
+  rects[0].img.y = imgNew1.y;
+}
+
+function gallerySelectImg2(source) {
+  imgNew2 = loadImage(source);
+  rects[1].img = imgNew2;
+  rects[1].img.width = imgNew2.width;
+  rects[1].img.height = imgNew2.height;
+  rects[1].img.x = imgNew2.x;
+  rects[1].img.y = imgNew2.y;
 }
 
 

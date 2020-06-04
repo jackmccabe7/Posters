@@ -12,18 +12,34 @@
   justify-items: center;
 }
 
+body, html {
+  height: 100%;
+}
+
 header {
   grid-area: topbar;
+  border-bottom: 1px solid black;
+  margin: auto;
+  padding: 0;
+  width: 100%;
+  text-align: center;
 }
 
 #aside {
   grid-area: sidebar;
-  padding-left: 20px;  
+  padding-left: 20px;
+  border-right: 1px solid black;  
 }
 
 #sketchdiv {
   grid-area: sketch;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: auto;
   padding-top: 5%;
+  background-color: dimgray;
   
 }
 
@@ -40,6 +56,10 @@ header {
   margin: 3px;
   padding: 3px;
   background-color: burlywood;
+  display: block;
+  opacity: 0.5;
+  background: rgba(0, 0, 0, 1);
+  transition: opacity .15s linear;
 }
 
 #gallery img {
