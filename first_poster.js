@@ -1,4 +1,5 @@
 let font1, font2,
+  showGrid = false,
   slider,
   fontsize = 20,
   inputFile,
@@ -9,6 +10,7 @@ let font1, font2,
   alignment,
   rects = [], 
   images = [],
+  fonts = [],
   draggingRects = [],
   dragRec,
   isDragging = false,
@@ -47,12 +49,19 @@ function preload() {
   // is loaded before setup() and draw() are called
   font1 = loadFont('Aileron-Black.otf');
   font2 = loadFont('Pilowlava-Regular.otf');
-  //img1 = loadImage('sunflowers.jpg');
-  //img2 = loadImage('hq.jpg');
   
   for (var i = 0; i < 4; i++) {
     images[i] = loadImage(i + ".jpg");
+    images[i].resize(50,100);
+    // console.log(images[1]);
   }
+
+  fonts.push("Aileron-Black.otf")
+  fonts.push("Pilowlava-Regular.otf")
+  fonts.push("YoungSerif-Regular.otf")
+  fonts.push("WorkSans-Regular.ttf")
+  fonts.push("WorkSans-Thin.ttf")
+  console.log(fonts)
 }
 
 //////////////////////////// SETUP /////////////////////////////
@@ -69,6 +78,8 @@ function setup() {
   subtextSlider.style('width', '200px');
   headlineSlider.class('slider');
   subtextSlider.class('slider');
+  gridSlider = createSlider(10, 155, 50);
+  gridSlider.style('width', '200px');
 
   //inputs setup
   inputFile1 = createFileInput(handleFile1);
@@ -78,6 +89,9 @@ function setup() {
   inputFile2 = createFileInput(handleFile2);
   gallery2 = createButton('Choose from gallery');
   gallery2.mousePressed(function() {viewImages(2);});
+
+  fontButton = createButton('Choose a font');
+  fontButton.mousePressed(function() {viewFonts();});
 
   headingTextInput = createInput();
   subTextInput = createInput();
@@ -90,6 +104,10 @@ function setup() {
   HeadingColorPicker = createColorPicker("#4d4dff");
   SubtextColorPicker = createColorPicker("ffffff");
 
+  gridButton = createButton("Toggle Grid");
+  gridButton.mousePressed(function() {showGrid = !showGrid;});
+  
+
   headingAlign = createRadio();
   headingAlign.option("left");
   headingAlign.option("centre");
@@ -98,56 +116,88 @@ function setup() {
   saveSketchButton = createButton("Save Poster");
   saveSketchButton.mousePressed(saveSketch);
   
-
   var cnv = createCanvas(550, 710);
+  // var logo = createCanvas(200, 50);
   
   //add js elements to parent divs for styling
   cnv.parent("sketchdiv");
 
+  headingContainer = createElement('div')
+  headingContainer.addClass('container')
+  headingContainer.parent("aside");
   headlineLabel = createElement('p', 'Heading Font Size')
-  headlineLabel.parent("aside");
-  headlineSlider.parent("aside");
+  headlineLabel.parent(headingContainer);
+  headlineSlider.parent(headingContainer);
+  headingTextInput.parent(headingContainer);
+  HeadingColorPicker.parent(headingContainer);
+  headingAlign.parent(headingContainer);
 
-  headingAlign.parent("aside");
-
+  subtextContainer = createElement('div')
+  subtextContainer.addClass('container')
+  subtextContainer.parent("aside");
   subtextLabel = createElement('p', 'Subtext Font Size')
-  subtextLabel.parent("aside");
-  subtextSlider.parent("aside");
+  subtextLabel.parent(subtextContainer);
+  subtextSlider.parent(subtextContainer);
+  subTextInput.parent(subtextContainer);
+  SubtextColorPicker.parent(subtextContainer);
+  dateInput.parent(subtextContainer);
 
-  
-
+  img1Container = createElement('div')
+  img1Container.addClass('container')
+  img1Container.parent("aside");
   image1Label = createElement('p', 'Replace Image 1')
-  image1Label.parent("aside");
-  inputFile1.parent("aside");
-  gallery1.parent("aside");
+  image1Label.parent(img1Container);
+  inputFile1.parent(img1Container);
+  gallery1.parent(img1Container);
   
-
+  img2Container = createElement('div')
+  img2Container.addClass('container')
+  img2Container.parent("aside");
   image2Label = createElement('p', 'Replace Image 2')
-  image2Label.parent("aside");
-  inputFile2.parent("aside");
-  gallery2.parent("aside");
-
-  headingTextInput.parent("aside");
-  HeadingColorPicker.parent("aside");
-  subTextInput.parent("aside");
-  SubtextColorPicker.parent("aside");
-  dateInput.parent("aside");
-  SubtextColorPicker.parent("aside");
+  image2Label.parent(img2Container);
+  inputFile2.parent(img2Container);
+  gallery2.parent(img2Container);
   
+  bgContainer = createElement('div');
+  bgContainer.addClass('container');
+  bgContainer.parent("aside");
+  bgLabel = createElement('p', 'Background');
+  bgLabel.parent(bgContainer);
+  bgColorPicker.parent(bgContainer);
+  gridButton.parent(bgContainer);
+  gridSlider.parent(bgContainer);
 
-  bgLabel = createElement('p', 'Background Colour');
-  bgLabel.parent("aside");
-  bgColorPicker.parent("aside");
+  fontContainer = createElement('div');
+  fontContainer.addClass('container');
+  fontContainer.parent('aside');
+  fontButton.parent(fontContainer);
+
   
-  saveSketchButton.parent("aside");
+  saveSketchContainer = createElement('div');
+  saveSketchContainer.addClass('container');
+  saveSketchContainer.parent("aside");
+  saveSketchButton.parent(saveSketchContainer);
 
+  
+  
+  var logo = select('ul');
+  logo.mouseOver(animateLogo);
+  logo.mouseOut(revert);
 
-  textFont(font1);
   textSize(fontsize);
 }
 
 function changeBackground() {
   bg = random(255);
+}
+
+function drawGrid() {
+  for (var i = 0; i < width; i += 10) {
+    
+  	line(i, 0, i, height);
+  	line(width, i, 0, i);
+  
+  }
 }
 
 function handleFile1(file) {
@@ -157,7 +207,7 @@ function handleFile1(file) {
     rects[0].img = imgNew1;
     rects[0].img.width = imgNew1.width;
     rects[0].img.height = imgNew1.height;
-    //rects[0] = new Rectangle(rects[0].x, rects[0].y, imgNew1);
+    rects[0].img.resize(50,100);
   } else {
     imgNew1 = null;
   }
@@ -170,6 +220,7 @@ function handleFile2(file) {
     rects[1].img = imgNew2;
     rects[1].img.width = imgNew2.width;
     rects[1].img.height = imgNew2.height;
+    rects[1].img.resize(50,100);
   } else {
     imgNew2 = null;
   }
@@ -187,16 +238,36 @@ function placeImages() {
   }
 }
 
+function animateLogo() {
+  var text = select(".text");
+  text.removeClass("hidden");
+}
+
+function revert() {
+  var text = select(".text");
+  text.addClass("hidden");
+}
 //////////////////////////// DRAW /////////////////////////////
 
 function draw() {
   
   clear();
+  
   alignment = headingAlign.value();
   hfontval = headlineSlider.value();
   sfontval = subtextSlider.value();
+  gridval = gridSlider.value();
   background(bgColorPicker.color());
-  
+
+  if (showGrid == false) {  
+    for (var i = 0; i < height; i += gridSlider.value()) {
+      stroke(000)
+      line(i, 0, i, height);
+      line(width, i, 0, i);
+    
+    }
+  }
+
   if (alignment) {
     if (alignment == "left") {
       textAlign(LEFT);
@@ -208,9 +279,10 @@ function draw() {
       textAlign(CENTER);
     }
   }
-
+  
   rects.forEach(r => r.show());
-
+  
+  textFont(font1);
   textSize(hfontval);
   fill(HeadingColorPicker.color());
   noStroke();
@@ -225,7 +297,6 @@ function draw() {
 }
 
 function mousePressed() {
-  //let m = createVector(mouseX, mouseY);
   let index;
   rects.forEach((r, i) => {
     if(r.hits(mouseX, mouseY)) {
@@ -290,12 +361,14 @@ if (galleryDiv.childNodes.length < 2) {
   }
 }
 function gallerySelectImg1(source) {
+  let galleryDiv = document.getElementById("gallery");
   imgNew1 = loadImage(source);
   rects[0].img.width = imgNew1.width;
   rects[0].img.height = imgNew1.height;
   rects[0].img = imgNew1;
   rects[0].img.x = imgNew1.x;
   rects[0].img.y = imgNew1.y;
+  rects[0].img.resize(50,100);
 }
 
 function gallerySelectImg2(source) {
@@ -305,6 +378,40 @@ function gallerySelectImg2(source) {
   rects[1].img.height = imgNew2.height;
   rects[1].img.x = imgNew2.x;
   rects[1].img.y = imgNew2.y;
+  rects[1].img.resize(50,100);
 }
+
+function viewFonts() {
+  
+  let galleryDiv = document.getElementById("gallery");
+  if (galleryDiv.childNodes.length < 2) {
+      let galleryLabel = createElement('h1', 'Fonts');
+      galleryLabel.parent("gallery");
+      for (let i = 0; i < 5; i++) (function(i){
+        src = fonts[i];
+        console.log(src);
+        font = createElement('div', src);
+        console.log(src);
+        font.parent("gallery");
+        if (true) {
+          font.attribute('src', src)
+          font.attribute('onclick',"gallerySelectFont(src)")
+        };
+        console.log(src);   
+        }(i));
+    } else {
+      var child = galleryDiv.lastElementChild;
+      while (child) {
+        galleryDiv.removeChild(child);
+        child = galleryDiv.lastElementChild;
+      }
+    }
+  }
+
+  function gallerySelectFont(source) {
+    console.log(source);
+    font1 = loadFont(source);
+    //textFont(font1);
+  }
 
 
