@@ -29,11 +29,17 @@ body, html {
 
 header {
   grid-area: topbar;
+  /* display: inline; */
   border-bottom: 1px solid black;
   /* margin: auto; */
   padding: 0;
   width: 100%;
   text-align: center;
+}
+header p {
+  font-size: medium;
+  display: inline;
+  float: right;
 }
 
 #aside {
@@ -50,6 +56,11 @@ header {
   padding-bottom: 10px;
   padding-top: 10px;
   border-bottom: 1px solid black;
+}
+
+p {
+  margin-top: 3px;
+  margin-bottom: 3px;
 }
 
 #sketchdiv {

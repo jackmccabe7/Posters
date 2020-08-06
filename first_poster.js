@@ -8,6 +8,7 @@ let font1, font2,
   img2x = 200, img2y = 50,
   imgNew2,
   alignment,
+  spacing,
   rects = [], 
   images = [],
   fonts = [],
@@ -20,8 +21,14 @@ let font1, font2,
 
 class Rectangle {
   constructor (x, y, image) {
-    this.width = image.width;
-    this.height = image.height;
+    if (image.width < 500) {
+      this.width = image.width
+    } else { this.width = 500}
+    if (image.height < 375) {
+      this.height = image.height
+    } else { this.height = 375}
+    // this.width = 500;
+    // this.height = 375;
     this.img = image;
     this.x = x;
     this.offsetX = 0;
@@ -31,6 +38,7 @@ class Rectangle {
   
   show() {
     image(this.img, this.x, this.y);
+    this.img.resize(this.width, this.height);
   }
   
   hits(hx,hy) {
@@ -80,6 +88,8 @@ function setup() {
   subtextSlider.class('slider');
   gridSlider = createSlider(10, 155, 50);
   gridSlider.style('width', '200px');
+  headlineSpacingSlider = createSlider(45, 140, 50);
+  headlineSpacingSlider.style('width', '200px');
 
   //inputs setup
   inputFile1 = createFileInput(handleFile1);
@@ -117,9 +127,11 @@ function setup() {
   saveSketchButton.mousePressed(saveSketch);
   
   var cnv = createCanvas(550, 710);
+  ctx = cnv.drawingContext;
   // var logo = createCanvas(200, 50);
   
   //add js elements to parent divs for styling
+
   cnv.parent("sketchdiv");
 
   headingContainer = createElement('div')
@@ -128,6 +140,9 @@ function setup() {
   headlineLabel = createElement('p', 'Heading Font Size')
   headlineLabel.parent(headingContainer);
   headlineSlider.parent(headingContainer);
+  headlineSpacingLabel = createElement('p', 'Heading Spacing')
+  headlineSpacingLabel.parent(headingContainer);
+  headlineSpacingSlider.parent(headingContainer);
   headingTextInput.parent(headingContainer);
   HeadingColorPicker.parent(headingContainer);
   headingAlign.parent(headingContainer);
@@ -232,8 +247,8 @@ function saveSketch() {
 
 function placeImages() {
   for(var i = 0; i < 2; i++) {
-    let x = random(0,width);
-    let y = random(0, height);
+    let x = random(width*2);
+    let y = random(height*2);
     rects.push(new Rectangle(x, y, images[i]));
   }
 }
@@ -250,11 +265,12 @@ function revert() {
 //////////////////////////// DRAW /////////////////////////////
 
 function draw() {
-  
+  select('canvas').elt.style.letterSpacing = "20px";
   clear();
   
   alignment = headingAlign.value();
   hfontval = headlineSlider.value();
+  hSpaceVal = headlineSpacingSlider.value();
   sfontval = subtextSlider.value();
   gridval = gridSlider.value();
   background(bgColorPicker.color());
@@ -269,10 +285,10 @@ function draw() {
   }
 
   if (alignment) {
-    if (alignment == "left") {
+    if (alignment == "right") {
       textAlign(LEFT);
     }
-    else if (alignment == "right") {
+    else if (alignment == "left") {
       textAlign(RIGHT);
     }
     else if (alignment == "centre") {
@@ -281,17 +297,22 @@ function draw() {
   }
   
   rects.forEach(r => r.show());
-  
+
+  // select('canvas').elt.style.letterSpacing = "20px";
+  let canv = select('canvas');
+  canv.style('letterSpacing', '15px');
   textFont(font1);
   textSize(hfontval);
+  textLeading(hSpaceVal);
   fill(HeadingColorPicker.color());
   noStroke();
-  text(headingTextInput.value(), width/2, 150); 
+  text(headingTextInput.value(), 10, 50, width - 10, height); 
   textAlign(LEFT);
   textSize(sfontval);
   fill(SubtextColorPicker.color());
   text(subTextInput.value(), 10, 590);
   text(dateInput.value(), 10, 630);
+  
   
   
 }
@@ -328,20 +349,12 @@ function mouseReleased() {
   isDragging = false;
 }
 
-function placeImages() {
-  for(var i = 0; i < 2; i++) {
-    let x = random(0,width);
-    let y = random(0, height);
-    rects.push(new Rectangle(x, y, images[i]));
-  }
-}
-
 function viewImages(buttonNum) {
 let galleryDiv = document.getElementById("gallery");
 if (galleryDiv.childNodes.length < 2) {
     let galleryLabel = createElement('h1', 'Images')
     galleryLabel.parent("gallery");
-    for(var i = 0; i < 6; i++) {
+    for(var i = 0; i < 8; i++) {
       src = i + ".jpg"
       img = createImg(src, "idk")
       img.parent("gallery");
